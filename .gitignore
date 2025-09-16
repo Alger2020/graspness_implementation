@@ -16,3 +16,5 @@ logs
 dataset/tolerance
 **/.idea/
 MinkowskiEngine/
+graspnetAPI/
+print_test.py
