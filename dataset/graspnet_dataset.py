@@ -254,7 +254,7 @@ class GraspNetDataset(Dataset):
                     'object_poses_list': object_poses_list,                         #(9,3,4)物体姿态列表，列表长度为该场景物体数<9>，姿态形状为(3,4)
                     'grasp_points_list': grasp_points_list,                         #(9,300,3)抓取点列表长度为<9>,形状为(300,3) 300是单物体抓取点数量，3是xyz坐标
                     'grasp_widths_list': grasp_widths_list,                         #(9,300,300,12,4)抓取点宽度列表
-                    'grasp_scores_list': grasp_scores_list}                         #(9,300,300,12,4)抓取分数列表长度: 9  单个分数形状: (300, 300, 12, 4)   300是预设的视角点，12是预设的旋转角度，4是预设的深度，妈的
+                    'grasp_scores_list': grasp_scores_list}                         #(9,300,300,12,4)抓取分数列表长度: 9  单个分数形状: (300, 300, 12, 4)   300是预设的视角点，12是预设的旋转角度，4是预设的深度，
         return ret_dict
 
 
@@ -279,9 +279,9 @@ def minkowski_collate_fn(list_data):
     coordinates_batch, features_batch, _, quantize2original = ME.utils.sparse_quantize(
         coordinates_batch, features_batch, return_index=True, return_inverse=True)
     res = {
-        "coors": coordinates_batch,
-        "feats": features_batch,
-        "quantize2original": quantize2original
+        "coors": coordinates_batch,   #(B,20000,3)批量的体素坐标啊
+        "feats": features_batch,      #(B,20000,3) 点云的初始特征，简单设为1
+        "quantize2original": quantize2original  #索引映射。它的作用是将在量化/稀疏卷积后得到的特征，恢复到与原始输入点云一一对应的顺序。
     }
 
     def collate_fn_(batch):

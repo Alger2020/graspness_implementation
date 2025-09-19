@@ -8,6 +8,14 @@ ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(ROOT_DIR)
 from utils.data_utils import get_workspace_mask, CameraInfo, create_point_cloud_from_depth_image
 
+
+'''文件核心功能
+这个脚本的核心功能是可视化单个场景视角下的“抓取度”（Graspness）。
+
+它会加载一个特定场景、特定视角的所有相关数据（彩色图、深度图、分割图、抓取度标签等），然后生成一个三维点云。最后，它会用**鲜明的颜色（绿色）**将那些“抓取度”分数较高的点标记出来，并通过 Open3D 库将这个点云展示在屏幕上。
+
+简单来说，这个脚本的目的是让你能够直观地看到在某个场景中，哪些点被算法认为是好的抓取点。'''
+
 data_path = '/media/bot/980A6F5E0A6F38801/datasets/graspnet/'
 scene_id = 'scene_0060'
 ann_id = '0000'

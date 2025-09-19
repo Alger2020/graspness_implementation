@@ -107,11 +107,12 @@ def process_grasp_labels(end_points):
     label_mask = (batch_grasp_scores > 0) & (batch_grasp_widths <= GRASP_MAX_WIDTH)  # (B, Ns, V, A, D)
     batch_grasp_scores[~label_mask] = 0
 
-    end_points['batch_grasp_point'] = batch_grasp_points
-    end_points['batch_grasp_view_rot'] = batch_grasp_views_rot
-    end_points['batch_grasp_score'] = batch_grasp_scores
-    end_points['batch_grasp_width'] = batch_grasp_widths
-    end_points['batch_grasp_view_graspness'] = batch_grasp_view_graspness
+    #为1024个种子点中的每一个，都赋予了一个完整的抓取标签。
+    end_points['batch_grasp_point'] = batch_grasp_points          #(B, Ns, 3·)  (B,1024,3)  1024个种子点云对应的最接近的真实标签点云坐标
+    end_points['batch_grasp_view_rot'] = batch_grasp_views_rot    #(B, Ns, V, 3, 3) (B,1024,300,3,3) 对应的接近向量转换的旋转矩阵
+    end_points['batch_grasp_score'] = batch_grasp_scores      # (B, Ns, V, A, D) 与种子点关联的、在所有视角、角度、深度下的真实抓取质量得分。
+    end_points['batch_grasp_width'] = batch_grasp_widths  #: (B, Ns, V, A, D) 与抓取分数对应的、抓取成功时所需的夹爪宽度。
+    end_points['batch_grasp_view_graspness'] = batch_grasp_view_graspness #(B,Ns,V)为每个种子点，在每个视角下的“可抓取性”得分（View Graspness）
 
     return end_points
 
@@ -137,7 +138,8 @@ def match_grasp_view_and_label(end_points):
         u_min = top_view_grasp_scores[po_mask].min()
         top_view_grasp_scores[po_mask] = torch.log(u_max / top_view_grasp_scores[po_mask]) / (torch.log(u_max / u_min) + 1e-6)
 
-    end_points['batch_grasp_score'] = top_view_grasp_scores  # (B, Ns, A, D)
-    end_points['batch_grasp_width'] = top_view_grasp_widths  # (B, Ns, A, D)
+#输入最佳视角索引，并用这些索引从 process_grasp_labels 生成的密集标签中，切片出对应的标签。
+    end_points['batch_grasp_score'] = top_view_grasp_scores  # (B, Ns, A, D) 与种子点关联的、在最佳视角、角度、深度下的真实抓取质量得分。
+    end_points['batch_grasp_width'] = top_view_grasp_widths  # (B, Ns, A, D) 与抓取分数对应的、在最佳视角的抓取成功时所需的夹爪宽度。
 
     return top_template_views_rot, end_points
