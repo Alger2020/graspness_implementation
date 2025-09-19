@@ -79,6 +79,7 @@ def inference():
     net = GraspNet(seed_feat_dim=cfgs.seed_feat_dim, is_training=False)
     # 设置计算设备，如果CUDA可用则使用GPU，否则使用CPU
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    print(f"正在使用设备 (Using device): {device}")
     # 将模型的所有参数和缓冲区移动到指定的计算设备
     net.to(device)
     # Load checkpoint

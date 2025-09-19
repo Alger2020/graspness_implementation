@@ -123,6 +123,7 @@ print('train dataloader length训练数据加载器的批次总数: ', len(TRAIN
 # --- 3. 模型构建：初始化模型和优化器 ---
 
 # 实例化GraspNet模型，并设置为训练模式
+print(f"检测到 {torch.cuda.device_count()} 张可用的GPU")
 net = GraspNet(seed_feat_dim=cfgs.seed_feat_dim, is_training=True)
 # 设置计算设备，如果CUDA可用则使用GPU，否则使用CPU
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
